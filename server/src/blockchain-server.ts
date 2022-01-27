@@ -12,4 +12,31 @@ export class BlockchainServer extends MessageServer<Message>{
         }
     }
     
+    private handleGetLongestChainRequest(requestor: WebSocket, message: Message): void {
+
+    }
+
+    private handleGetLongestChainResponse(sender: WebSocket, message: Message): void{
+
+    }
+
+    private handleAddTransactionsRequest(requestor:WebSocket, message: Message): void{
+
+    }
+
+    private handleNewBlockAnnouncement(requestor:WebSocket, message:Message): void{
+
+    }
+
+    private everyoneReplied(sender:WebSocket, message: Message): boolean{
+
+    }
+
+    private selectTheLongestChain(currentlyLongest: Message, current: Message, index: number){
+
+    }
+
+    private get clientIsNotAlone(): boolean{
+        
+    }
 }
