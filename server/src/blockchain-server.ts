@@ -5,5 +5,11 @@ import { Message, MessageTypes, UUID } from './messages';
 type Replies = Map<WebSocket, Message>;
 
 export class BlockchainServer extends MessageServer<Message>{
+
+    protected handleMessage(sender: WebSocket, message: Message): void {
+        switch(message.type){
+
+        }
+    }
     
 }
