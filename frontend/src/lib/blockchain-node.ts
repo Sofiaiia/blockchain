@@ -1,4 +1,4 @@
-//import { sha256 } from './cryptography';
+import { sha256 } from './cryptography';
 
 const HASH_REQUIREMENT = '0000';
 
@@ -54,47 +54,77 @@ export class BlockchainNode{
         return this.mineBlock(block);
     }
 
+    //push new transaction to the array of pending transactions
     addTransaction(transaction: Transaction): void{
-
+        this._pendingTransactions.push(transaction);
     }
 
+    //Tries to add new block to blockchain, also have errorhandling
     async addBlock(newBlock: Block): Promise<void>{
+        //line that goes before error message
+        const errorMessagePrefix = `⚠️ Block "${newBlock.hash.substr(0, 8)}" is rejected`;
 
+        //find block after which new block should be 
+        const previousBlockIndex = this._chain.findIndex(b => b.hash === newBlock.previousHash);
+        if(previousBlockIndex < 0){
+            throw new Error(`${errorMessagePrefix} - there is no block in the chain with the specified previous hash "${newBlock.previousHash.substr(0, 8)}".`);
+        }
+
+        // current node may already have one or more blocks generated after the one that is attempt to add. 
+        //In this case the longest chain takes precedence and the new block is rejected.
+        const tail = this._chain.slice(previousBlockIndex + 1);
+        if(tail.length >= 1){
+            throw new Error(`${errorMessagePrefix} - the longer tail of the current node takes precedence over the new block.`);
+        }
+
+        //check hash of the new block against hash of previous block 
+        const newBlockHash = await this.calculateHash(newBlock);
+        const previousBlockHash = this._chain[previousBlockIndex].hash;
+        const newBlockValid = ( newBlockHash.startsWith(HASH_REQUIREMENT) && newBlock.previousHash === previousBlockHash && newBlock.hash === newBlockHash);
+        if(!newBlockValid){
+            throw new Error(`${errorMessagePrefix} - hash verification has failed.`);
+        }
+
+        //add new block to the end of the chain 
+        this._chain = [...this._chain,newBlock];
     }
 
     private async calculateHash(block: WithoutHash<Block>): Promise<string>{
-
+        const data = block.previousHash + block.timestamp + JSON.stringify(block.transactions) + block.nonce;
+        return sha256(data);
     }
 
     //GETTERS
     get isMining(): boolean{
-        
+        return this._isMining;
     }
 
     get chain(): Block[]{
-
+        return [...this._chain];
     }
 
     get chainIsEmpty(): boolean{
-
+        return this._chain.length === 0;
     }
 
     get latestBlock(): Block{
-
+        return this._chain[this._chain.length - 1];
     }
 
     get pendingTransactions(): Transaction[]{
-
+        return [...this._pendingTransactions]
     }
 
     get hasPendingTransactions(): boolean{
-
+        return this.pendingTransactions.length > 0;
     }
 
     get noPendingTransactions(): boolean{
-
+        return this.pendingTransactions.length === 0;
     }
 }
     export function randomDelay(maxMilliseconds:number = 100): Promise<void>{
-
+        return new Promise((resolve) =>{
+            setTimeout(()=> resolve(), Math.floor(Math.random() * Math.floor(maxMilliseconds)));
+        });
     }
