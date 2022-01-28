@@ -30,19 +30,45 @@ export class BlockchainNode{
     }
 
     async initializeWithGenesisBlock(): Promise<void>{
-
+        const genesisBlock = await this.mineBlock({previousHash: '0', timestamp: Date.now(), transactions:[]});
+        this._chain.push(genesisBlock);
     }
 
     async mineBlock(block:NotMinedBlock): Promise<Block>{
+        this._isMining = true;
+        let hash = '';
+        let nonce = 0;
 
+        do{
+            hash = await this.calculateHash({...block,nonce: ++nonce})
+        }while(!hash.startsWith(HASH_REQUIREMENT));
+
+        this._isMining = false;
+        this._pendingTransactions = [];
+
+        return {...block,hash,nonce};
     }
 
     async mineBlockWith(transactions: Transaction[]): Promise<Block>{
+        const block = {previousHash: this.latestBlock.hash, timestamp: Date.now(), transactions};
+        return this.mineBlock(block);
+    }
+
+    addTransaction(transaction: Transaction): void{
 
     }
 
-    get isMining(): boolean{
+    async addBlock(newBlock: Block): Promise<void>{
 
+    }
+
+    private async calculateHash(block: WithoutHash<Block>): Promise<string>{
+
+    }
+
+    //GETTERS
+    get isMining(): boolean{
+        
     }
 
     get chain(): Block[]{
@@ -66,18 +92,6 @@ export class BlockchainNode{
     }
 
     get noPendingTransactions(): boolean{
-
-    }
-
-    addTransaction(transaction: Transaction): void{
-
-    }
-
-    async addBlock(newBlock: Block): Promise<void>{
-
-    }
-
-    private async calculateHash(block: WithoutHash<Block>): Promise<string>{
 
     }
 }
