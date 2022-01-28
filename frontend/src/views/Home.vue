@@ -15,8 +15,8 @@ import TransactionForm from '@/components/TransactionForm.vue';
 //import { Message, MessageTypes } from '@/lib/messages';
 //import { WebsocketController } from '@/lib/websocket-controller';
 
-const node = new BlockchainNode();
-const server = new WebsocketController();
+//const node = new BlockchainNode();
+//const server = new WebsocketController();
 
 /*
 @Component({
