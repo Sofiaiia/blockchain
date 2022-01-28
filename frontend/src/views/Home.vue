@@ -15,6 +15,10 @@ import TransactionForm from '@/components/TransactionForm.vue';
 //import { Message, MessageTypes } from '@/lib/messages';
 //import { WebsocketController } from '@/lib/websocket-controller';
 
+const node = new BlockchainNode();
+const server = new WebsocketController();
+
+/*
 @Component({
   components: {
     BlocksPanel,
@@ -22,6 +26,7 @@ import TransactionForm from '@/components/TransactionForm.vue';
     TransactionForm
   },
 })
+*/
 export default class Home extends Vue {
   status: string = '';
 
