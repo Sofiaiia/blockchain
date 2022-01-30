@@ -4,9 +4,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
 
-@Component
+import { Options, Vue } from 'vue-class-component';
+
 export default class Block extends Vue {
 
 }
