@@ -1,4 +1,3 @@
-import { transform } from '@vue/compiler-core';
 import { Block, Transaction } from './blockchain-node';
 import { uuid } from './cryptography';
 import { Message, MessageTypes, UUID } from './messages';
