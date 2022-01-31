@@ -31,10 +31,10 @@ const server = new WebsocketController();
   }
 })
 
-
 export default class Home extends Vue {
   status: string = '';
 
+  
 
 }
 </script>
