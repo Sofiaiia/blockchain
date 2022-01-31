@@ -25,21 +25,26 @@ export class BlockchainNode{
     private _pendingTransactions: Transaction[] = [];
     private _isMining = false;
 
+    //initialize with existing blocks
     initializeWith(blocks: Block[]): void{
         this._chain = [...blocks];
     }
 
+    //initialize but does not have blocks from before, creating a block as genesis block instead 
     async initializeWithGenesisBlock(): Promise<void>{
         const genesisBlock = await this.mineBlock({previousHash: '0', timestamp: Date.now(), transactions:[]});
         this._chain.push(genesisBlock);
     }
 
+    //calculate a hash that startswith 4x'0'
     async mineBlock(block:NotMinedBlock): Promise<Block>{
         this._isMining = true;
         let hash = '';
         let nonce = 0;
 
+        //calling calculateHash function untill hash starts with '0000', evey time increase the nonce
         do{
+            //increasing nonce every time it starts over 
             hash = await this.calculateHash({...block,nonce: ++nonce})
         }while(!hash.startsWith(HASH_REQUIREMENT));
 
@@ -49,6 +54,7 @@ export class BlockchainNode{
         return {...block,hash,nonce};
     }
 
+    //KOLLA när denna anropas 
     async mineBlockWith(transactions: Transaction[]): Promise<Block>{
         const block = {previousHash: this.latestBlock.hash, timestamp: Date.now(), transactions};
         return this.mineBlock(block);
@@ -89,40 +95,50 @@ export class BlockchainNode{
         this._chain = [...this._chain,newBlock];
     }
 
+    //calculate hash together with sha-256 function
     private async calculateHash(block: WithoutHash<Block>): Promise<string>{
         const data = block.previousHash + block.timestamp + JSON.stringify(block.transactions) + block.nonce;
         return sha256(data);
     }
 
     //GETTERS
+
+    //getter, check if block is mining
     get isMining(): boolean{
         return this._isMining;
     }
 
+    //get all blocks in chain 
     get chain(): Block[]{
         return [...this._chain];
     }
 
+    //getter, check if chain is empty 
     get chainIsEmpty(): boolean{
         return this._chain.length === 0;
     }
 
+    //get latest block in chain
     get latestBlock(): Block{
         return this._chain[this._chain.length - 1];
     }
 
+    //get all pending transactions
     get pendingTransactions(): Transaction[]{
         return [...this._pendingTransactions]
     }
 
+    //getter, check if there are pending transactions
     get hasPendingTransactions(): boolean{
         return this.pendingTransactions.length > 0;
     }
 
+    //getter, check if pening transactios is empty 
     get noPendingTransactions(): boolean{
         return this.pendingTransactions.length === 0;
     }
 }
+    //vad används denna till??
     export function randomDelay(maxMilliseconds:number = 100): Promise<void>{
         return new Promise((resolve) =>{
             setTimeout(()=> resolve(), Math.floor(Math.random() * Math.floor(maxMilliseconds)));
