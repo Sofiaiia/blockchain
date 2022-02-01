@@ -39,16 +39,20 @@ const server = new WebsocketController();
 export default class Home extends Vue {
   status: string = '';
 
+  //connect to server 
   created() {
     this.updateStatus();
     server
       .connect(this.handleServerMessages.bind(this))
       .then(this.initializeBlockchainNode.bind(this));
   }
+
+  //disconnect from server
   destroyed() {
     server.disconnect();
   }
 
+  //Status messages
   updateStatus() {
     this.status = node.chainIsEmpty          ? '⏳ Initializing the blockchain...' :
                   node.isMining              ? '⏳ Mining a new block...' :
@@ -56,10 +60,25 @@ export default class Home extends Vue {
                                                `✅ Ready to mine a new block (transactions: ${node.pendingTransactions.length}).`;
   }
 
+  //initialize blockchain 
+  async initializeBlockchainNode(): Promise<void> {
+    /*
+    const blocks = await server.requestLongestChain();
+    if (blocks.length > 0) {
+      node.initializeWith(blocks);
+    } else {
+      await node.initializeWithGenesisBlock();
+    }
+    this.updateStatus();
+    */
+  }
+
+  //start blocks - used in section 3
   blocks(): Block[] {
     return node.chain;
   }
 
+  //switch for different messages
   handleServerMessages(message: Message) {
     switch (message.type) {
       case MessageTypes.GetLongestChainRequest: return this.handleGetLongestChainRequest(message);
@@ -71,7 +90,7 @@ export default class Home extends Vue {
     }
   }
 
-   handleGetLongestChainRequest(message: Message): void {
+  handleGetLongestChainRequest(message: Message): void {
      /*
     server.send({
       type: MessageTypes.GetLongestChainResponse,
@@ -89,22 +108,10 @@ export default class Home extends Vue {
   }
 
   handleNewBlockAnnouncement(message: Message): void {
-    const newBlock = message.payload as Block;
-    this.addBlock(newBlock, false);
+      const newBlock = message.payload as Block;
+      this.addBlock(newBlock, false);
   }
-
-  async initializeBlockchainNode(): Promise<void> {
-    /*
-    const blocks = await server.requestLongestChain();
-    if (blocks.length > 0) {
-      node.initializeWith(blocks);
-    } else {
-      await node.initializeWithGenesisBlock();
-    }
-    this.updateStatus();
-    */
-  }
-
+  
   async addBlock(block: Block, notifyOthers = true): Promise<void> {
     /*
     try {
@@ -130,7 +137,23 @@ export default class Home extends Vue {
   }
 
   /* SECTION 2 */
-  /* SECTION 3 */
 
+  transactions(): Transaction[] {
+    return node.pendingTransactions;
+  }
+
+  async generateBlock(): Promise<void> {
+    /*
+    server.requestNewBlock(node.pendingTransactions);
+    const miningProcessIsDone = node.mineBlockWith(node.pendingTransactions);
+    this.updateStatus();
+    const newBlock = await miningProcessIsDone;
+    this.addBlock(newBlock);
+  }
+
+  shouldDisableGeneration(): boolean {
+    return node.isMining || node.noPendingTransactions;
+    */
+  }
 }
 </script>
