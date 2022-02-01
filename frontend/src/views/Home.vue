@@ -10,7 +10,11 @@
         </transaction-form>
       </section>
       <section>
-        <pending-transactions-panel>
+        <pending-transactions-panel
+          :transactions="transactions()"
+          :disabled="shouldDisableGeneration()"
+          @generate-block="generateBlock"
+        >
         </pending-transactions-panel>
       </section>
       <section>
@@ -62,7 +66,7 @@ export default class Home extends Vue {
 
   //initialize blockchain 
   async initializeBlockchainNode(): Promise<void> {
-    /*
+    
     const blocks = await server.requestLongestChain();
     if (blocks.length > 0) {
       node.initializeWith(blocks);
@@ -70,7 +74,6 @@ export default class Home extends Vue {
       await node.initializeWithGenesisBlock();
     }
     this.updateStatus();
-    */
   }
 
   //start blocks - used in section 3
@@ -91,14 +94,13 @@ export default class Home extends Vue {
   }
 
   handleGetLongestChainRequest(message: Message): void {
-     /*
     server.send({
       type: MessageTypes.GetLongestChainResponse,
       correlationId: message.correlationId,
       payload: node.chain
     });
-    */
   }
+  
   async handleNewBlockRequest(message: Message): Promise<void> {
     const transactions = message.payload as Transaction[];
     const miningProcessIsDone = node.mineBlockWith(transactions);
@@ -111,9 +113,8 @@ export default class Home extends Vue {
       const newBlock = message.payload as Block;
       this.addBlock(newBlock, false);
   }
-  
+
   async addBlock(block: Block, notifyOthers = true): Promise<void> {
-    /*
     try {
       await node.addBlock(block);
       if (notifyOthers) {
@@ -123,7 +124,6 @@ export default class Home extends Vue {
       console.log(error.message);
     }
     this.updateStatus();
-    */
   }
 
   /* SECTION 1 */
@@ -143,7 +143,6 @@ export default class Home extends Vue {
   }
 
   async generateBlock(): Promise<void> {
-    /*
     server.requestNewBlock(node.pendingTransactions);
     const miningProcessIsDone = node.mineBlockWith(node.pendingTransactions);
     this.updateStatus();
@@ -153,7 +152,6 @@ export default class Home extends Vue {
 
   shouldDisableGeneration(): boolean {
     return node.isMining || node.noPendingTransactions;
-    */
   }
 }
 </script>

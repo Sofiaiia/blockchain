@@ -4,8 +4,10 @@ import { Message, MessageTypes, UUID } from './messages';
 
 //describes the type of object we are storing in messagesAwaitingReply map
 interface PromiseExecutor<T> {
-    resolve: (value?: T | PromiseLike<T>) => void;
-    reject: (reason?: any) => void;
+    //tagit bort ?
+    resolve: (value: T | PromiseLike<T>) => void;
+    //tagit bort ?
+    reject: (reason: any) => void;
 }  
 
 export class WebsocketController{
@@ -52,11 +54,11 @@ export class WebsocketController{
         }
     }
 
-    /*
+    
     async send(message: Partial<Message>, awaitForReply: boolean = false): Promise<Message> {
         return new Promise<Message>(async (resolve, reject) => {
           if (awaitForReply) {
-              //stores messages that needs response 
+            //stores messages that needs response 
             this.messagesAwaitingReply.set(message.correlationId!, { resolve, reject });
           }
           this.websocket.then(
@@ -101,5 +103,4 @@ export class WebsocketController{
           payload: block
         });
     }
-    */
 }

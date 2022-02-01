@@ -1,13 +1,42 @@
 <template>
     <div>
-        <p> Section 2</p>
+        <h2> Pending transactions </h2>
+        <pre class="pending-transactions__list">{{ formattedTransactions() || 'No pending transactions yet.' }}</pre>
+        <div class="pending-transactions__form">
+            <button 
+                type="button"
+                :disabled="disabled"
+                @click="generateBlock()"
+            >
+                GENERATE BLOCK
+            </button>
+    </div>
+    <div class="clear"></div>
     </div>
 </template>
 
-<script land="ts">
+<script lang="ts">
 import { Options, Vue } from 'vue-class-component';
+import { Transaction } from '@/lib/blockchain-node';
+import { Prop } from 'vue-property-decorator'
 
+@Options({
+    props:{
+        disabled: {
+            type: Boolean
+        }
+    }
+})
 export default class PendingTransactionsPanel extends Vue{
 
+    @Prop({ type: Array, required: true }) readonly transactions!: Transaction[];
+
+    formattedTransactions(): string{
+        return this.transactions.map((t: any) =>`${t.sender} → ${t.recipient}: $${t.amount}`).join('\n');
+    }
+
+    generateBlock(){
+        this.$emit('generate-block');
+    }
 }
 </script>
