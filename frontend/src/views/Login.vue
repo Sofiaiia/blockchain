@@ -31,10 +31,12 @@ export default class Login extends Vue{
   googleSignIn(){
     signInWithPopup(this.auth, this.provider)
     .then((result) => {
-      
+      //alert('Successfully logged in');
+      this.$router.push('/');
     }).catch((error) => {
-
+      alert(error.message);
     });
   }
+
 }
 </script>

@@ -1,5 +1,6 @@
 <template>
   <main id="app">
+      <button @click="signOutGoogle"> Logout </button>
       <h1> Blockchain node </h1>
       <aside><p> {{ status }} </p></aside>
       <section>
@@ -36,6 +37,9 @@ import TransactionForm from '@/components/TransactionForm.vue';
 import { Block, BlockchainNode, Transaction } from '@/lib/blockchain-node';
 import { Message, MessageTypes } from '@/lib/messages';
 import { WebsocketController } from '@/lib/websocket-controller';
+
+import { getAuth, signOut} from "firebase/auth";
+import { initializeApp } from "firebase/app";
 
 
 const node = new BlockchainNode();
@@ -153,6 +157,27 @@ export default class Home extends Vue {
 
   shouldDisableGeneration(): boolean {
     return node.isMining || node.noPendingTransactions;
+  }
+
+  /* google logout */
+  firebaseConfig = {
+      apiKey: "AIzaSyClOAWOszA0Ldqqs6wym4HETDXojifqU6A",
+      authDomain: "ts-course-e1637.firebaseapp.com",
+      projectId: "ts-course-e1637",
+      storageBucket: "ts-course-e1637.appspot.com",
+      messagingSenderId: "775940375456",
+      appId: "1:775940375456:web:fc4c2c9769b4a9f1109ac5"
+  };
+
+  app = initializeApp(this.firebaseConfig);
+
+  signOutGoogle(){
+    const auth = getAuth(this.app);
+    signOut(auth).then(() => {
+      this.$router.push('/login');
+    }).catch((error) => {
+      console.log(error.message);
+    });
   }
 }
 </script>
