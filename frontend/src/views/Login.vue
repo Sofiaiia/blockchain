@@ -1,6 +1,9 @@
 <template>
   <div class="about">
     <h1>Login</h1>
+    <button @click="googleSignIn">
+        Sign in with google
+    </button>
   </div>
 </template>
 
@@ -9,6 +12,7 @@
 import { GoogleAuthProvider } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { Options, Vue } from 'vue-class-component';
+import { getAuth, signInWithPopup} from "firebase/auth";
 
 export default class Login extends Vue{
   firebaseConfig = {
@@ -21,7 +25,16 @@ export default class Login extends Vue{
   };
 
   app = initializeApp(this.firebaseConfig);
+  provider = new GoogleAuthProvider();
+  auth = getAuth();
 
-  
+  googleSignIn(){
+    signInWithPopup(this.auth, this.provider)
+    .then((result) => {
+      
+    }).catch((error) => {
+
+    });
+  }
 }
 </script>

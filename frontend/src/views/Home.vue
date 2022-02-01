@@ -18,7 +18,9 @@
         </pending-transactions-panel>
       </section>
       <section>
-        <blocks-panel>
+        <blocks-panel
+        
+        >
         </blocks-panel>
       </section>
   </main>
@@ -137,7 +139,6 @@ export default class Home extends Vue {
   }
 
   /* SECTION 2 */
-
   transactions(): Transaction[] {
     return node.pendingTransactions;
   }
