@@ -3,7 +3,10 @@
       <h1> Blockchain node </h1>
       <aside><p> {{ status }} </p></aside>
       <section>
-        <transaction-form>
+        <transaction-form
+          :disabled="shouldDisableForm()"
+          @add-transaction="addTransaction"
+        >
         </transaction-form>
       </section>
       <section>
@@ -36,7 +39,98 @@ const server = new WebsocketController();
 export default class Home extends Vue {
   status: string = '';
 
+  created() {
+    this.updateStatus();
+    server
+      .connect(this.handleServerMessages.bind(this))
+      .then(this.initializeBlockchainNode.bind(this));
+  }
+  destroyed() {
+    server.disconnect();
+  }
+
+  updateStatus() {
+    this.status = node.chainIsEmpty          ? '⏳ Initializing the blockchain...' :
+                  node.isMining              ? '⏳ Mining a new block...' :
+                  node.noPendingTransactions ? '📩 Add one or more transactions.' :
+                                               `✅ Ready to mine a new block (transactions: ${node.pendingTransactions.length}).`;
+  }
+
+  blocks(): Block[] {
+    return node.chain;
+  }
+
+  handleServerMessages(message: Message) {
+    switch (message.type) {
+      case MessageTypes.GetLongestChainRequest: return this.handleGetLongestChainRequest(message);
+      case MessageTypes.NewBlockRequest       : return this.handleNewBlockRequest(message);
+      case MessageTypes.NewBlockAnnouncement  : return this.handleNewBlockAnnouncement(message);
+      default: {
+        console.log(`Received message of unknown type: "${message.type}"`);
+      }
+    }
+  }
+
+   handleGetLongestChainRequest(message: Message): void {
+     /*
+    server.send({
+      type: MessageTypes.GetLongestChainResponse,
+      correlationId: message.correlationId,
+      payload: node.chain
+    });
+    */
+  }
+  async handleNewBlockRequest(message: Message): Promise<void> {
+    const transactions = message.payload as Transaction[];
+    const miningProcessIsDone = node.mineBlockWith(transactions);
+    this.updateStatus();
+    const newBlock = await miningProcessIsDone;
+    this.addBlock(newBlock);
+  }
+
+  handleNewBlockAnnouncement(message: Message): void {
+    const newBlock = message.payload as Block;
+    this.addBlock(newBlock, false);
+  }
+
+  async initializeBlockchainNode(): Promise<void> {
+    /*
+    const blocks = await server.requestLongestChain();
+    if (blocks.length > 0) {
+      node.initializeWith(blocks);
+    } else {
+      await node.initializeWithGenesisBlock();
+    }
+    this.updateStatus();
+    */
+  }
+
+  async addBlock(block: Block, notifyOthers = true): Promise<void> {
+    /*
+    try {
+      await node.addBlock(block);
+      if (notifyOthers) {
+        server.announceNewBlock(block);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+    this.updateStatus();
+    */
+  }
+
+  /* SECTION 1 */
+  shouldDisableForm(): boolean {
+      return node.isMining || node.chainIsEmpty;
+  }
   
+  addTransaction(transaction: Transaction): void {
+    node.addTransaction(transaction);
+    this.updateStatus();
+  }
+
+  /* SECTION 2 */
+  /* SECTION 3 */
 
 }
 </script>
