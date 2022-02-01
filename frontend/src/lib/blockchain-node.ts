@@ -76,8 +76,9 @@ export class BlockchainNode{
             throw new Error(`${errorMessagePrefix} - there is no block in the chain with the specified previous hash "${newBlock.previousHash.substr(0, 8)}".`);
         }
 
-        // current node may already have one or more blocks generated after the one that is attempt to add. 
-        //In this case the longest chain takes precedence and the new block is rejected.
+        //LONGEST CHAIN RULE
+        // The current node may already have one or more blocks generated (or received from other nodes in the network),
+        // after the one we attempt to add. In this case the longest chain takes precedence and the new block is rejected.
         const tail = this._chain.slice(previousBlockIndex + 1);
         if(tail.length >= 1){
             throw new Error(`${errorMessagePrefix} - the longer tail of the current node takes precedence over the new block.`);

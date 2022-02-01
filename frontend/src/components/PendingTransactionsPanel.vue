@@ -1,12 +1,12 @@
 <template>
     <div>
+        <p> Section 2</p>
     </div>
 </template>
 
 <script land="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Options, Vue } from 'vue-class-component';
 
-@Component
 export default class PendingTransactionsPanel extends Vue{
 
 }

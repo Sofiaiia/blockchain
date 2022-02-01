@@ -29,14 +29,15 @@ export class BlockchainServer extends MessageServer<Message>{
     }
     
     private handleGetLongestChainRequest(requestor: WebSocket, message: Message): void {
+        //if client has more than one node
         if(this.clientIsNotAlone){
             //stores the client's request using the correlationId as key
             this.receivedMessagesAwaitingResponse.set(message.correlationId, requestor);
             //map accumulates replies from clients 
             this.sentMessagesAwaitingReply.set(message.correlationId, new Map());
-            //broadcasts the message to other nodes 
+            //broadcasts the message to other nodes, requesting their longest chain
             this.broadcastExcept(requestor,message);
-        }else{
+        }/* if client only has one node*/else{
             this.replyTo(requestor,{
                 type: MessageTypes.GetLongestChainResponse,
                 correlationId: message.correlationId,
@@ -47,25 +48,33 @@ export class BlockchainServer extends MessageServer<Message>{
     }
 
     private handleGetLongestChainResponse(sender: WebSocket, message: Message): void{
+        //find the client that requested longest chain 
         if(this.receivedMessagesAwaitingResponse.has(message.correlationId)){
+            //gets the referece to cliets socket object 
             const requestor = this.receivedMessagesAwaitingResponse.get(message.correlationId);
 
             if(this.everyoneReplied(sender,message)){
+                //set of replies from nodes
                 const allReplies = this.sentMessagesAwaitingReply.get(message.correlationId).values();
+                //finds the longest chain by turning the above into array and use reduce method
                 const longestChain = Array.from(allReplies).reduce(this.selectTheLongestChain);
+                //send the longest chain to the client that requested it
                 this.replyTo(requestor, longestChain);
             }
         }
     }
 
+    //a node has started mining, send message to invite other node to do the same
     private handleAddTransactionsRequest(requestor:WebSocket, message: Message): void{
         this.broadcastExcept(requestor,message);
     }
 
+    //mining is completed, sending message to other nodes
     private handleNewBlockAnnouncement(requestor:WebSocket, message:Message): void{
         this.broadcastExcept(requestor,message);
     }
 
+    //chechs if every node replied to the request
     private everyoneReplied(sender:WebSocket, message: Message): boolean{
         const repliedClients = this.sentMessagesAwaitingReply
                 .get(message.correlationId)
@@ -73,13 +82,16 @@ export class BlockchainServer extends MessageServer<Message>{
 
         const awaitingForClients = Array.from(this.clients).filter(c => !repliedClients.has(c));
 
+        //have all nodes except the orogginal requestor replied
         return awaitingForClients.length === 1;
     }
 
+    //used while reducing the array of longest chains 
     private selectTheLongestChain(currentlyLongest: Message, current: Message, index: number){
         return index > 0 && current.payload.length > currentlyLongest.payload.length ? current : currentlyLongest;
     }
 
+    //check if there is more than one node in blockchain
     private get clientIsNotAlone(): boolean{
         return this.clients.size > 1;
     }

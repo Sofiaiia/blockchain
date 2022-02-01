@@ -1,6 +1,7 @@
 import * as WebSocket from 'ws';
 
 export abstract class MessageServer<T>{
+
     constructor(private readonly wsServer: WebSocket.Server){
         //subscribe to new connected clients messages
         this.wsServer.on('connection', this.subscribeToMessages);
@@ -34,6 +35,7 @@ export abstract class MessageServer<T>{
     //implementation in blockchain-server file = function abstract 
     protected abstract handleMessage(sender: WebSocket, message: T): void;
 
+    //send a message to the other nodes
     protected broadcastExcept(currentClient: WebSocket, message: Readonly<T>) : void{
         this.wsServer.clients.forEach(client => {
             if(this.isAlive(client) && client !== currentClient){
@@ -47,10 +49,12 @@ export abstract class MessageServer<T>{
         client.send(JSON.stringify(message));
     }
 
+    //get all clients 
     protected get clients(): Set<WebSocket>{
         return this.wsServer.clients;
     }
 
+    //check if client is connected
     private isAlive(client: WebSocket): boolean{
         return !this.isDead(client);
     }

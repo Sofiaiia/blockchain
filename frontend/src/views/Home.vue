@@ -2,7 +2,18 @@
   <main id="app">
       <h1> Blockchain node </h1>
       <aside><p> {{ status }} </p></aside>
-      <p> SECTIONS </p>
+      <section>
+        <transaction-form>
+        </transaction-form>
+      </section>
+      <section>
+        <pending-transactions-panel>
+        </pending-transactions-panel>
+      </section>
+      <section>
+        <blocks-panel>
+        </blocks-panel>
+      </section>
   </main>
 </template>
 
@@ -16,21 +27,12 @@ import TransactionForm from '@/components/TransactionForm.vue';
 import { Block, BlockchainNode, Transaction } from '@/lib/blockchain-node';
 import { Message, MessageTypes } from '@/lib/messages';
 import { WebsocketController } from '@/lib/websocket-controller';
-import Component from 'vue-class-component';
 
 
 const node = new BlockchainNode();
 const server = new WebsocketController();
 
-
-@Options({
-  components: {
-    BlocksPanel,
-    PendingTransactionsPanel,
-    TransactionForm
-  }
-})
-
+@Options({components:{TransactionForm,BlocksPanel,PendingTransactionsPanel}})
 export default class Home extends Vue {
   status: string = '';
 
