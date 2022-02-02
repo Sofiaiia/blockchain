@@ -1,19 +1,31 @@
 <template>
+  <div>
+    <h2>Current blocks</h2>
     <div>
-        <p> Selction 3</p>
+      <div>
+        <block v-for="(block, i) in blocks"
+               :key="block.hash"
+               :index="i"
+               :block="block">
+        </block>
+      </div>
+      <div> </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import BlockComponent from './Block.vue';
+import { Prop } from 'vue-property-decorator';
+import { Block } from '@/lib/blockchain-node';
 
 @Options({
     components:{
         Block: BlockComponent
     }
 })
-export default class BlocksPanel extends Vue{
-    
+export default class BlocksPanel extends Vue {
+  @Prop({ type: Array, required: true }) readonly blocks: Block[] = [];
 }
 </script>

@@ -20,7 +20,7 @@
       </section>
       <section>
         <blocks-panel
-        
+          :blocks="blocks()"
         >
         </blocks-panel>
       </section>
@@ -160,6 +160,7 @@ export default class Home extends Vue {
   }
 
   /* google logout */
+
   firebaseConfig = {
       apiKey: "AIzaSyClOAWOszA0Ldqqs6wym4HETDXojifqU6A",
       authDomain: "ts-course-e1637.firebaseapp.com",
