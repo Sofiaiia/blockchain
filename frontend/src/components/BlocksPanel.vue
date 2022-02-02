@@ -26,6 +26,7 @@ import { Block } from '@/lib/blockchain-node';
     }
 })
 export default class BlocksPanel extends Vue {
+    //array of all the blocks, renders with a for loop
   @Prop({ type: Array, required: true }) readonly blocks: Block[] = [];
 }
 </script>

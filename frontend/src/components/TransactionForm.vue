@@ -51,22 +51,26 @@ import { Transaction } from '../lib/blockchain-node';
         }
     }
 })
+//form to add new transactions
 export default class TransactionForm extends Vue{
 
     formValue: Transaction = this.defaultFormValue();
 
+    //check that form is valid(all fields filled) before button is activated
     isValid(){
         return(
             this.formValue.sender && this.formValue.recipient && this.formValue.amount > 0
         );
     }
 
+    //add new transactions
     handleFormSubmit(){
         this.$emit('add-transaction',{...this.formValue});
 
         this.formValue = this.defaultFormValue();
     }
 
+    //fieldnames and default values for form 
     private defaultFormValue(): Transaction{
         return{
             sender: '',

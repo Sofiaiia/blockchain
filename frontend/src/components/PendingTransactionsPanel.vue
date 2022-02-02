@@ -29,12 +29,15 @@ import { Prop } from 'vue-property-decorator'
 })
 export default class PendingTransactionsPanel extends Vue{
 
+    //array og transactions
     @Prop({ type: Array, required: true }) readonly transactions!: Transaction[];
 
+    //print all pending transactions 
     formattedTransactions(): string{
         return this.transactions.map((t: any) =>`${t.sender} → ${t.recipient}: $${t.amount}`).join('\n');
     }
 
+    //start mining block
     generateBlock(){
         this.$emit('generate-block');
     }
