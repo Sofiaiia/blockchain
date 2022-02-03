@@ -1,6 +1,6 @@
 <template>
   <main id="app">
-      <button @click="signOutGoogle" class="googleLogout"> Logout </button>
+      <button @click="signOutGoogle" class="googleButton"> Logout </button>
       <h1> Blockchain node </h1>
       <aside><p> {{ status }} </p></aside>
       <section>

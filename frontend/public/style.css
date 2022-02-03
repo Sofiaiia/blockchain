@@ -245,10 +245,9 @@ button[disabled] {
     will-change: background;
 }
 
-/* google login */
+/* google Button */
 
-/* google logout */
-.googleLogout{
+.googleButton{
     background-color: #4C8BF5;
     margin-bottom: 25px;
     border: none;

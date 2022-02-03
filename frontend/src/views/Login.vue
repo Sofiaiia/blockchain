@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <h1>Login</h1>
-    <button @click="googleSignIn">
+    <button @click="googleSignIn" class="googleButton">
         Sign in with google
     </button>
   </div>
