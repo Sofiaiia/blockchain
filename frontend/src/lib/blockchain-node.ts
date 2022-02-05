@@ -54,7 +54,6 @@ export class BlockchainNode{
         return {...block,hash,nonce};
     }
 
-    //KOLLA när denna anropas 
     async mineBlockWith(transactions: Transaction[]): Promise<Block>{
         const block = {previousHash: this.latestBlock.hash, timestamp: Date.now(), transactions};
         return this.mineBlock(block);
@@ -139,7 +138,6 @@ export class BlockchainNode{
         return this.pendingTransactions.length === 0;
     }
 }
-    //vad används denna till??
     export function randomDelay(maxMilliseconds:number = 100): Promise<void>{
         return new Promise((resolve) =>{
             setTimeout(()=> resolve(), Math.floor(Math.random() * Math.floor(maxMilliseconds)));
